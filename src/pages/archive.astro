@@ -1,0 +1,45 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from "astro:content";
+import { formatDate } from "../utils/date";
+
+const posts = (
+	await getCollection("posts", ({ data }) => !data.draft)
+).sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+
+const years = new Map<number, typeof posts>();
+for (const post of posts) {
+	const year = post.data.published.getFullYear();
+	if (!years.has(year)) years.set(year, []);
+	years.get(year)!.push(post);
+}
+---
+
+<BaseLayout title="归档">
+	<header class="page-header">
+		<h1>归档</h1>
+		<p>共 {posts.length} 篇文章</p>
+	</header>
+
+	{
+		[...years.entries()].map(([year, yearPosts]) => (
+			<section>
+				<h2 class="archive-year">{year}</h2>
+				<ul class="archive-list">
+					{
+						yearPosts.map((post) => (
+							<li>
+								<span class="date">
+									{formatDate(post.data.published)}
+								</span>
+								<a href={`/posts/${post.id}/`}>
+									{post.data.title}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</section>
+		))
+	}
+</BaseLayout>

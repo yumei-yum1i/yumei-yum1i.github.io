@@ -1,0 +1,25 @@
+<button class="theme-toggle" type="button" aria-label="切换主题" title="切换主题">
+	<span id="theme-icon"></span>
+</button>
+
+<script>
+	const root = document.documentElement;
+	const icon = document.getElementById("theme-icon");
+	const sun = "☀️";
+	const moon = "🌙";
+
+	function applyIcon() {
+		const theme = root.getAttribute("data-theme");
+		icon.textContent = theme === "dark" ? sun : moon;
+	}
+
+	applyIcon();
+
+	document.querySelector(".theme-toggle")?.addEventListener("click", () => {
+		const current = root.getAttribute("data-theme") === "dark" ? "dark" : "light";
+		const next = current === "dark" ? "light" : "dark";
+		root.setAttribute("data-theme", next);
+		localStorage.setItem("theme", next);
+		applyIcon();
+	});
+</script>

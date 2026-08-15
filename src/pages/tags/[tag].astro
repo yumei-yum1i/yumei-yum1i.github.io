@@ -1,0 +1,44 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostCard from "../../components/PostCard.astro";
+import { getCollection } from "astro:content";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("posts", ({ data }) => !data.draft);
+	const tags = new Set<string>();
+	for (const post of posts) {
+		for (const tag of post.data.tags) tags.add(tag);
+	}
+	return [...tags].map((tag) => ({
+		params: { tag },
+		props: { tag },
+	}));
+}
+
+const { tag } = Astro.props;
+const posts = (
+	await getCollection("posts", ({ data }) => !data.draft && data.tags.includes(tag))
+).sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+---
+
+<BaseLayout title={`标签：${tag}`}>
+	<header class="page-header">
+		<h1># {tag}</h1>
+		<p>共 {posts.length} 篇文章</p>
+	</header>
+
+	<section class="post-list">
+		{
+			posts.map((post) => (
+				<PostCard
+					title={post.data.title}
+					href={`/posts/${post.id}/`}
+					published={post.data.published}
+					description={post.data.description}
+					tags={post.data.tags}
+					category={post.data.category}
+				/>
+			))
+		}
+	</section>
+</BaseLayout>

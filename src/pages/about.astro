@@ -1,0 +1,60 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { site } from "../site.config";
+---
+
+<BaseLayout title="关于">
+	<header class="page-header">
+		<h1>关于我</h1>
+	</header>
+
+	<section class="about-card">
+		<div class="profile-top">
+			<img class="avatar" src={site.avatar} alt={site.author} />
+			<div>
+				<h2>{site.author}</h2>
+				<p class="bio">{site.subtitle}</p>
+			</div>
+		</div>
+
+		<p>
+			你好，我是 <strong>{site.author}</strong>
+			，一名热爱<strong>逆向工程</strong>的独立研究者。
+		</p>
+
+		<h3>我的关注方向</h3>
+		<ul>
+			<li>
+				<strong>二进制逆向</strong>：使用 Ghidra、IDA Pro、x64dbg
+				等工具分析恶意样本、还原程序逻辑
+			</li>
+			<li>
+				<strong>恶意软件分析</strong>：静态 + 动态分析病毒、木马、勒索软件的行为
+			</li>
+			<li>
+				<strong>漏洞研究</strong>：从漏洞分析到利用的完整流程
+			</li>
+			<li>
+				<strong>CTF</strong>：Reverse / PWN 方向解题与出题的思路
+			</li>
+		</ul>
+
+		<h3>关于本站</h3>
+		<p>
+			本站使用 Astro 从零构建，是<strong>完全由我自己编写</strong>的博客框架，主要用于：
+		</p>
+		<ul>
+			<li>记录逆向分析与漏洞研究的学习笔记</li>
+			<li>分享工具使用心得与实战案例</li>
+			<li>沉淀二进制安全相关的技术文章</li>
+		</ul>
+
+		<blockquote>
+			本站内容仅供学习与研究使用，请遵守当地法律法规，切勿用于非法用途。
+		</blockquote>
+
+		<p>
+			📬 GitHub：<a href={site.github} target="_blank">{site.github}</a>
+		</p>
+	</section>
+</BaseLayout>

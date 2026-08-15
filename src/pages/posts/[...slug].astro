@@ -1,0 +1,73 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import { getCollection, render } from "astro:content";
+import { formatDateLong } from "../../utils/date";
+
+export async function getStaticPaths() {
+	const posts = await getCollection("posts", ({ data }) => !data.draft);
+	return posts.map((post) => ({
+		params: { slug: post.id },
+		props: { post },
+	}));
+}
+
+const { post } = Astro.props;
+const { Content, headings } = await render(post);
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+	<div class="post-layout">
+		<article class="post">
+			<header>
+				<h1>{post.data.title}</h1>
+				<div class="post-meta">
+					<time datetime={post.data.published.toISOString()}>
+						📅 {formatDateLong(post.data.published)}
+					</time>
+					{
+						post.data.updated && (
+							<time datetime={post.data.updated.toISOString()}>
+								更新于 {formatDateLong(post.data.updated)}
+							</time>
+						)
+					}
+					{post.data.category && (
+						<a href={`/category/${post.data.category}/`}>
+							<span class="category-badge">{post.data.category}</span>
+						</a>
+					)}
+				</div>
+				<div class="tags">
+					{post.data.tags.map((tag) => (
+						<a class="tag" href={`/tags/${tag}/`}>
+							#{tag}
+						</a>
+					))}
+				</div>
+			</header>
+			<div class="post-body">
+				<Content />
+			</div>
+		</article>
+
+		{headings.length > 0 && (
+			<aside class="toc">
+				<h4>目录</h4>
+				<ul>
+					{
+						headings.map((heading) => (
+							<li>
+								<a
+									href={`#${heading.slug}`}
+									style={`padding-left: ${Math.max(0, heading.depth - 2) * 12}px`}
+								>
+									{heading.text}
+								</a>
+							</li>
+						))
+					}
+				</ul>
+			</aside>
+		)}
+	</div>
+</BaseLayout>

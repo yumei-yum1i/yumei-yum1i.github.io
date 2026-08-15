@@ -1,0 +1,79 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+---
+
+<BaseLayout title="搜索">
+	<header class="page-header">
+		<h1>搜索</h1>
+		<p>在全部文章中搜索关键词</p>
+	</header>
+
+	<div class="search-box">
+		<input
+			class="search-input"
+			type="search"
+			id="search-input"
+			placeholder="输入关键词，如：Ghidra / 栈溢出 / 逆向..."
+			autofocus
+		/>
+	</div>
+	<div id="search-results"></div>
+
+	<script>
+		let index = [];
+
+		async function loadIndex() {
+			const res = await fetch("/search-index.json");
+			index = await res.json();
+		}
+
+		function render(results) {
+			const box = document.getElementById("search-results");
+			if (results.length === 0) {
+				box.innerHTML = '<p class="search-empty">没有匹配的结果</p>';
+				return;
+			}
+			box.innerHTML = results
+				.map(
+					(item) => `
+				<div class="search-result">
+					<a href="/posts/${item.slug}/">${item.title}</a>
+					<div class="meta">${item.published} · ${item.category || ""} · ${item.tags.map((t) => `#${t}`).join(" ")}</div>
+					<p class="snippet">${escapeHtml(item.description || item.content.slice(0, 120))}</p>
+				</div>`
+				)
+				.join("");
+		}
+
+		function escapeHtml(s) {
+			const div = document.createElement("div");
+			div.textContent = s;
+			return div.innerHTML;
+		}
+
+		async function search(query) {
+			if (!query) {
+				render([]);
+				return;
+			}
+			const q = query.toLowerCase();
+			const results = index.filter((item) => {
+				const haystack = (
+					item.title +
+					" " +
+					item.content +
+					" " +
+					item.tags.join(" ") +
+					" " +
+					item.category
+				).toLowerCase();
+				return haystack.includes(q);
+			});
+			render(results);
+		}
+
+		loadIndex();
+		const input = document.getElementById("search-input");
+		input.addEventListener("input", (e) => search(e.target.value));
+	</script>
+</BaseLayout>

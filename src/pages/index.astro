@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import PostCard from "../components/PostCard.astro";
+import { getCollection } from "astro:content";
+import { site } from "../site.config";
+
+const posts = (
+	await getCollection("posts", ({ data }) => !data.draft)
+).sort((a, b) => b.data.published.getTime() - a.data.published.getTime());
+---
+
+<BaseLayout>
+	<section
+		class="hero"
+		style={`background-image: url('${site.banner}')`}
+	>
+		<div class="hero-content">
+			<h1>{site.title}</h1>
+			<p>{site.subtitle}</p>
+		</div>
+	</section>
+
+	<section class="post-list">
+		{
+			posts.map((post) => (
+				<PostCard
+					title={post.data.title}
+					href={`/posts/${post.id}/`}
+					published={post.data.published}
+					description={post.data.description}
+					tags={post.data.tags}
+					category={post.data.category}
+				/>
+			))
+		}
+	</section>
+</BaseLayout>

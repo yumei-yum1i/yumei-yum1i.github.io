@@ -1,0 +1,34 @@
+---
+import { site, nav } from "../site.config";
+import ThemeToggle from "./ThemeToggle.astro";
+
+const { pathname } = Astro.url;
+---
+
+<header class="site-header">
+	<div class="header-inner">
+		<a class="site-title" href="/">
+			{site.title}<span>.</span>
+		</a>
+		<nav class="site-nav">
+			{
+				nav.map((item) => (
+					<a
+						href={item.href}
+						class:list={[
+							{
+								active:
+									item.href === "/"
+										? pathname === "/"
+										: pathname.startsWith(item.href),
+							},
+						]}
+					>
+						{item.name}
+					</a>
+				))
+			}
+			<ThemeToggle />
+		</nav>
+	</div>
+</header>

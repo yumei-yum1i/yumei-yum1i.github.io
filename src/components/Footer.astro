@@ -1,0 +1,16 @@
+---
+import { site } from "../site.config";
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+	<div class="footer-inner">
+		<div>
+			&copy; {year} {site.author} · 保留所有权利
+		</div>
+		<div>
+			基于 <a href="https://astro.build" target="_blank">Astro</a> 构建 ·
+			<a href={site.github} target="_blank">GitHub</a>
+		</div>
+	</div>
+</footer>
